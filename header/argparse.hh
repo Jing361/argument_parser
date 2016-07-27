@@ -9,12 +9,20 @@
 
 class argumentNotFoundException : public std::exception{
 private:
-  std::string mArgName;
+  std::string mMessage;
 
 public:
   argumentNotFoundException(std::string name);
 
   virtual const char* what() const noexcept;
+};
+
+class invalidTypeException : public std::exception{
+private:
+  std::string mMessage;
+
+public:
+  invalidTypeException();
 };
 
 class argument{
@@ -27,6 +35,7 @@ public:
   argument(unsigned int nargs);
 
   std::string& getValue();
+  unsigned int getNargs();
 };
 
 class argparse{

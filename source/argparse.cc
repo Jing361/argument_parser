@@ -4,11 +4,15 @@
 using namespace std;
 
 argumentNotFoundException::argumentNotFoundException(std::string name):
-  mArgName(name){
+  mMessage("Could not find parametr " + name + "."){
 }
 
 const char* argumentNotFoundException::what() const noexcept{
-  return ("Could not find " + mArgName + ".").c_str();
+  return mMessage.c_str();
+}
+
+invalidTypeException::invalidTypeException():
+  mMessage("Invalid type for this argument"){
 }
 
 argument::argument(){
@@ -22,6 +26,10 @@ std::string& argument::getValue(){
   return mData;
 }
 
+unsigned int argument::getNargs(){
+  return mNargs;
+}
+
 void argparse::parse_args(int argc, char** argv){
   string str;
   for(;argc > 0; --argc){
@@ -33,16 +41,22 @@ void argparse::parse_args(int argc, char** argv){
 
   string tok;
   while(ss >> tok){
+    try{
+      mArgs.at(tok);
+    } catch (std::exception& e){
+      throw argumentNotFoundException(tok);
+    }
     if(tok[0] == '-'){
       if(tok[1] == '-'){
+        mArgs[tok].getValue() = tok.substr(2);
       } else {
-        try{
-          mArgs.at(tok);
-        } catch (std::exception& e){
-          throw argumentNotFoundException(tok);
-        }
         mArgs[tok].getValue() = tok.substr(2);
       }
+    }
+
+    unsigned int i = 0;
+    while(ss >> tok && i < mArgs[tok].getNargs()){
+      mArgs[tok].getValue() += ' ' + tok;
     }
   }
 }
