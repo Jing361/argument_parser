@@ -5,21 +5,28 @@
 #include<map>
 #include<string>
 #include<sstream>
+#include<exception>
+
+class argumentNotFoundException : public std::exception{
+private:
+  std::string mArgName;
+
+public:
+  argumentNotFoundException(std::string name);
+
+  virtual const char* what() const noexcept;
+};
 
 class argument{
 private:
+  unsigned int mNargs;
   std::string mData;
 
 public:
-  template<class T>
-  T retrieve(){
-    std::stringstream ss(mData);
-    T t;
+  argument();
+  argument(unsigned int nargs);
 
-    ss >> t;
-
-    return t;
-  }
+  std::string& getValue();
 };
 
 class argparse{
@@ -30,10 +37,21 @@ private:
 
 public:
   void parse_args(int argc, char** argv);
-  void add_argument(std::string name);
+  void add_argument(std::string name, unsigned int narg = 0);
   template<class T>
   T get_argument(std::string name){
-    return mArgs[name].retrieve<T>();
+    try{
+      mArgs.at(name);
+    } catch(std::exception& e){
+      throw argumentNotFoundException(name);
+    }
+
+    std::stringstream ss(mArgs[name].getValue());
+    T t;
+
+    ss >> t;
+
+    return t;
   }
 };
 

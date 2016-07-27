@@ -3,6 +3,25 @@
 
 using namespace std;
 
+argumentNotFoundException::argumentNotFoundException(std::string name):
+  mArgName(name){
+}
+
+const char* argumentNotFoundException::what() const noexcept{
+  return ("Could not find " + mArgName + ".").c_str();
+}
+
+argument::argument(){
+}
+
+argument::argument(unsigned int nargs):
+  mNargs(nargs){
+}
+
+std::string& argument::getValue(){
+  return mData;
+}
+
 void argparse::parse_args(int argc, char** argv){
   string str;
   for(;argc > 0; --argc){
@@ -11,24 +30,24 @@ void argparse::parse_args(int argc, char** argv){
   }
 
   stringstream ss(str);
-  vector<string> toks;
 
   string tok;
   while(ss >> tok){
     if(tok[0] == '-'){
-      toks.push_back(tok.substr(1));
-    }
-  }
-
-  for(auto it:toks){
-    if(it[0] == '-'){
-      mDoubleTokens.push_back(it.substr(1));
-    } else {
-      mSingleTokens.push_back(it);
+      if(tok[1] == '-'){
+      } else {
+        try{
+          mArgs.at(tok);
+        } catch (std::exception& e){
+          throw argumentNotFoundException(tok);
+        }
+        mArgs[tok].getValue() = tok.substr(2);
+      }
     }
   }
 }
 
-void argparse::add_argument(std::string name){
+void argparse::add_argument(std::string name, unsigned int narg){
+  mArgs[name] = argument(narg);
 }
 
