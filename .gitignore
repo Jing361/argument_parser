@@ -2,3 +2,6 @@ binary/*
 object/*
 depend/*
 *exe*
+*.swp
+*.o
+*.a
