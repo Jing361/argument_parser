@@ -1,8 +1,9 @@
+#include<sstream>
 #include<argparse.hh>
 
 using namespace std;
 
-argparse::argparse(int argc, char** argv){
+void argparse::parse_args(int argc, char** argv){
   string str;
   for(;argc > 0; --argc){
     str += argv[argc - 1];
@@ -26,5 +27,8 @@ argparse::argparse(int argc, char** argv){
       mSingleTokens.push_back(it);
     }
   }
+}
+
+void argparse::add_argument(std::string name){
 }
 
