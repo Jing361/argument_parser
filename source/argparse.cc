@@ -5,11 +5,16 @@
 using namespace std;
 
 argumentNotFoundException::argumentNotFoundException(std::string name):
-  mMessage("Could not find parametr \"" + name + "\"."){
+  mMessage("Could not find argument \"" + name + "\"."),
+  mCulprit(name){
 }
 
 const char* argumentNotFoundException::what() const noexcept{
   return mMessage.c_str();
+}
+
+const char* argumentNotFoundException::culprit() const noexcept{
+  return mCulprit.c_str();
 }
 
 invalidTypeException::invalidTypeException():
@@ -40,7 +45,7 @@ unsigned int argument::getNargs(){
   return mNargs;
 }
 
-void argparse::parse_args(int argc, char** argv){
+void argparse::parse_args(int argc, const char** argv){
   string str;
   for(int i = 1; i < argc; ++i){
     str += argv[i];

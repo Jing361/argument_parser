@@ -2,11 +2,14 @@
 #include<string>
 #include<exception>
 
+#define CATCH_CONFIG_MAIN
+#include<catch/catch.hpp>
+
 #include<argparse.hh>
 
 using namespace std;
 
-int main(int argc, char** argv){
+/*int main(int argc, char** argv){
   argparse ap;
 
   ap.add_argument("--test", 1);
@@ -29,5 +32,22 @@ int main(int argc, char** argv){
   }
 
   return 0;
+}*/
+
+TEST_CASE("Arguments can be checked by existence", "[parser]"){
+  argparse ap;
+  const char* argw[] = { "main", 
+                         "--test", "a",
+                         "-test", "b" };
+  int argd = 5;
+
+  ap.add_argument("--test", 1);
+  ap.add_argument("-test");
+  ap.add_argument("none");
+  try{
+  ap.parse_args(argd, argw);
+  } catch(argumentNotFoundException& e){
+    REQUIRE(e.culprit() == string("b"));
+  }
 }
 

@@ -10,11 +10,14 @@
 class argumentNotFoundException : public std::exception{
 private:
   std::string mMessage;
+  std::string mCulprit;
 
 public:
   argumentNotFoundException(std::string name);
 
   virtual const char* what() const noexcept;
+
+  virtual const char* culprit() const noexcept;
 };
 
 class invalidTypeException : public std::exception{
@@ -55,7 +58,7 @@ private:
   std::map<std::string, argument> mArgs;
 
 public:
-  void parse_args(int argc, char** argv);
+  void parse_args(int argc, const char** argv);
   void add_argument(std::string name, unsigned int narg = 0);
   template<class T>
   T get_argument(std::string name){
