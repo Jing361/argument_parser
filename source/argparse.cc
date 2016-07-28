@@ -1,10 +1,11 @@
+#include<iostream>
 #include<sstream>
 #include<argparse.hh>
 
 using namespace std;
 
 argumentNotFoundException::argumentNotFoundException(std::string name):
-  mMessage("Could not find parametr " + name + "."){
+  mMessage("Could not find parametr \"" + name + "\"."){
 }
 
 const char* argumentNotFoundException::what() const noexcept{
@@ -13,6 +14,15 @@ const char* argumentNotFoundException::what() const noexcept{
 
 invalidTypeException::invalidTypeException():
   mMessage("Invalid type for this argument"){
+}
+
+notEnoughParametersException::notEnoughParametersException(std::string argument, int narg):
+  mMessage("Not enough arguments supplied for \"" + argument + "\".  Expected "
+           + to_string(narg) + "."){
+}
+
+const char* notEnoughParametersException::what() const noexcept{
+  return mMessage.c_str();
 }
 
 argument::argument(){
@@ -32,8 +42,8 @@ unsigned int argument::getNargs(){
 
 void argparse::parse_args(int argc, char** argv){
   string str;
-  for(;argc > 0; --argc){
-    str += argv[argc - 1];
+  for(int i = 1; i < argc; ++i){
+    str += argv[i];
     str += ' ';
   }
 
@@ -50,13 +60,22 @@ void argparse::parse_args(int argc, char** argv){
       if(tok[1] == '-'){
         mArgs[tok].getValue() = tok.substr(2);
       } else {
-        mArgs[tok].getValue() = tok.substr(2);
+        mArgs[tok].getValue() = tok.substr(1);
       }
     }
 
     unsigned int i = 0;
-    while(ss >> tok && i < mArgs[tok].getNargs()){
-      mArgs[tok].getValue() += ' ' + tok;
+    while(i++ < mArgs[tok].getNargs()){
+      string param;
+      if(ss >> param){
+        if(param[0] == '-'){
+          throw notEnoughParametersException(tok, mArgs[tok].getNargs());
+        }
+        mArgs[tok].getValue() += ' ';
+        mArgs[tok].getValue() += param;
+      } else {
+        throw notEnoughParametersException(tok, mArgs[tok].getNargs());
+      }
     }
   }
 }

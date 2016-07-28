@@ -25,6 +25,16 @@ public:
   invalidTypeException();
 };
 
+class notEnoughParametersException : public std::exception{
+private:
+  std::string mMessage;
+
+public:
+  notEnoughParametersException(std::string argument, int narg);
+
+  virtual const char* what() const noexcept;
+};
+
 class argument{
 private:
   unsigned int mNargs;
