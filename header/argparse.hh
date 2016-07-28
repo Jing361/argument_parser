@@ -77,6 +77,10 @@ public:
   }
 };
 
+/* this specialization depends on the value returned from getvalue to be not 
+ * empty when the value was found.  the simple solution is to always prepend
+ * the value with the argument name when it is found.
+ */
 template<>
 inline bool argparse::get_argument<bool>(std::string name){
   try{
