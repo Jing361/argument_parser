@@ -66,6 +66,9 @@ public:
     }
 
     std::stringstream ss(mArgs[name].getValue());
+    std::string dump;
+    ss >> dump;
+
     T t;
 
     ss >> t;
@@ -73,6 +76,20 @@ public:
     return t;
   }
 };
+
+template<>
+inline bool argparse::get_argument<bool>(std::string name){
+  try{
+    if(mArgs.at(name).getValue() != ""){
+      return true;
+    } else {
+      return false;
+    }
+  } catch(std::exception& e){
+    throw argumentNotFoundException(name);
+  }
+
+}
 
 #endif
 
