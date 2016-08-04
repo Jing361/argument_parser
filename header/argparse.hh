@@ -95,7 +95,6 @@ inline bool argparse::get_argument<bool>(std::string name){
   } catch(std::exception& e){
     throw argumentNotFoundException(name);
   }
-
 }
 
 #endif
