@@ -74,10 +74,11 @@ TEST_CASE("Arguments can be checked by existence", "[parser]"){
                          "-test", "b" };
   int argd = 12;
 
-  ap.add_argument("--test", 1);
-  ap.add_argument("--aoeu", 1);
-  ap.add_argument("--htns", 2);
-  ap.add_argument("--str", 1);
+  ap.add_argument("--test", "", 1);
+  ap.add_argument("--aoeu", "", 1);
+  ap.add_argument("--htns", "", 2);
+  ap.add_argument("--str", "", 1);
+  ap.add_argument("--default", "12", 1);
   ap.add_argument("-test");
   ap.add_argument("none");
 
@@ -103,6 +104,8 @@ TEST_CASE("Arguments can be checked by existence", "[parser]"){
 
     REQUIRE(ap.get_argument<int>("--aoeu") == 1);
     REQUIRE(ap.get_argument<bool>("-test"));
+
+    REQUIRE(ap.get_argument<int>("--default") == 12);
   }
 }
 

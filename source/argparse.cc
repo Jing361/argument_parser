@@ -30,15 +30,23 @@ const char* notEnoughParametersException::what() const noexcept{
   return mMessage.c_str();
 }
 
-argument::argument(){
+argument::argument():
+  argument(0, ""){
 }
 
-argument::argument(unsigned int nargs):
-  mNargs(nargs){
+argument::argument(unsigned int nargs, const std::string& defVal):
+  mNargs(nargs),
+  mData(defVal){
 }
 
-std::string& argument::getValue(){
+std::string argument::getValue(){
   return mData;
+}
+
+void argument::setValue(const std::string& str){
+  if( str != "" ){
+    mData = str;
+  }
 }
 
 unsigned int argument::getNargs(){
@@ -63,9 +71,9 @@ void argparse::parse_args(int argc, const char** argv){
     }
     if(tok[0] == '-'){
       if(tok[1] == '-'){
-        mArgs[tok].getValue() = tok.substr(2);
+        mArgs[tok].setValue( tok.substr(2) );
       } else {
-        mArgs[tok].getValue() = tok.substr(1);
+        mArgs[tok].setValue( tok.substr(1) );
       }
     }
 
@@ -76,8 +84,8 @@ void argparse::parse_args(int argc, const char** argv){
         if(param[0] == '-'){
           throw notEnoughParametersException(tok, mArgs[tok].getNargs());
         }
-        mArgs[tok].getValue() += ' ';
-        mArgs[tok].getValue() += param;
+        mArgs[tok].setValue( mArgs[tok].getValue() + ' ' );
+        mArgs[tok].setValue( mArgs[tok].getValue() + param );
       } else {
         throw notEnoughParametersException(tok, mArgs[tok].getNargs());
       }
@@ -85,7 +93,7 @@ void argparse::parse_args(int argc, const char** argv){
   }
 }
 
-void argparse::add_argument(std::string name, unsigned int narg){
-  mArgs[name] = argument(narg);
+void argparse::add_argument(std::string name, std::string defVal, unsigned int narg){
+  mArgs[name] = argument(narg, name + ' ' + defVal);
 }
 

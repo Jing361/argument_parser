@@ -45,9 +45,10 @@ private:
 
 public:
   argument();
-  argument(unsigned int nargs);
+  argument(unsigned int nargs, const std::string& defVal);
 
-  std::string& getValue();
+  std::string getValue();
+  void setValue(const std::string& str);
   unsigned int getNargs();
 };
 
@@ -58,18 +59,19 @@ private:
   std::map<std::string, argument> mArgs;
 
 public:
-  void parse_args(int argc, const char** argv);
-  void add_argument(std::string name, unsigned int narg = 0);
+  void parse_args( int argc, const char** argv );
+  void add_argument( std::string name, std::string defVal = "", unsigned int narg = 0 );
   template<class T>
-  T get_argument(std::string name){
+  T get_argument( std::string name ){
     try{
-      mArgs.at(name);
-    } catch(std::exception& e){
-      throw argumentNotFoundException(name);
+      mArgs.at( name );
+    } catch( std::exception& e ){
+      throw argumentNotFoundException( name );
     }
 
-    std::stringstream ss(mArgs[name].getValue());
+    std::stringstream ss( mArgs[name].getValue() );
     std::string dump;
+
     ss >> dump;
 
     T t;
