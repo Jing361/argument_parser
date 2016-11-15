@@ -13,7 +13,7 @@ private:
   std::string mCulprit;
 
 public:
-  argumentNotFoundException(std::string name);
+  argumentNotFoundException( std::string name );
 
   virtual const char* what() const noexcept;
 
@@ -33,7 +33,7 @@ private:
   std::string mMessage;
 
 public:
-  notEnoughParametersException(std::string argument, int narg);
+  notEnoughParametersException( std::string argument, int narg );
 
   virtual const char* what() const noexcept;
 };
@@ -45,10 +45,10 @@ private:
 
 public:
   argument();
-  argument(unsigned int nargs, const std::string& defVal);
+  argument( unsigned int nargs, const std::string& defVal );
 
   std::string getValue();
-  void setValue(const std::string& str);
+  void setValue( const std::string& str );
   unsigned int getNargs();
 };
 
@@ -62,7 +62,7 @@ public:
   void parse_args( int argc, const char** argv );
   void add_argument( std::string name, std::string defVal = "", unsigned int narg = 0 );
   template<class T>
-  T get_argument( std::string name ){
+  T get_argument( const std::string& name ){
     try{
       mArgs.at( name );
     } catch( std::exception& e ){
@@ -87,15 +87,15 @@ public:
  * the value with the argument name when it is found.
  */
 template<>
-inline bool argparse::get_argument<bool>(std::string name){
+inline bool argparse::get_argument<bool>( const std::string& name ){
   try{
-    if(mArgs.at(name).getValue() != ""){
+    if( mArgs.at( name ).getValue() != "" ){
       return true;
     } else {
       return false;
     }
-  } catch(std::exception& e){
-    throw argumentNotFoundException(name);
+  } catch( std::exception& e ){
+    throw argumentNotFoundException( name );
   }
 }
 
