@@ -89,7 +89,7 @@ private:
 
 public:
   void parse_args( int argc, const char** argv );
-  void add_argument( std::string name, std::string defVal = "", unsigned int narg = 0 );
+  void add_argument( const std::string& name, std::string defVal = "", unsigned int narg = 0 );
   template<class T>
   T get_argument( const std::string& name ){
     try{

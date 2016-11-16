@@ -28,17 +28,25 @@ TEST_CASE( "Arguments can be checked by existence", "[parser]" ){
   ap.add_argument( "none" );
 
   SECTION( "Catches unspecified arguments" ){
-    bool sanity = false;
+    bool unspecifiedSanity = false;
     try{
       ap.parse_args( argd, argw );
     } catch( argumentNotFoundException& e ){
       REQUIRE( e.culprit() == string( "b" ) );
-      sanity = true;
+      unspecifiedSanity = true;
     }
-    REQUIRE( sanity );
+    REQUIRE( unspecifiedSanity );
   }
 
   SECTION( "Determines when not enough arguments are given" ){
+    bool notEnoughSanity = false;
+    ap.add_argument( "--htns", "", 4 );
+    try{
+      ap.parse_args( argd, argw );
+    } catch( notEnoughParametersException& ){
+      notEnoughSanity = true;
+    }
+    REQUIRE( notEnoughSanity );
   }
 
   SECTION( "Arguments can be checked after parsing" ){

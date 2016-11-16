@@ -1,4 +1,3 @@
-#include<iostream>
 #include<sstream>
 #include<argparse.hh>
 
@@ -93,7 +92,7 @@ void argparse::parse_args(int argc, const char** argv){
   }
 }
 
-void argparse::add_argument(std::string name, std::string defVal, unsigned int narg){
+void argparse::add_argument(const std::string& name, std::string defVal, unsigned int narg){
   mArgs[name] = argument(narg, name + ' ' + defVal);
 }
 
