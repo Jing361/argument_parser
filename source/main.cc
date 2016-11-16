@@ -1,7 +1,6 @@
 #include<iostream>
 #include<string>
 #include<exception>
-#include<array>
 
 #define CATCH_CONFIG_MAIN
 #include<catch/catch.hpp>
@@ -9,34 +8,6 @@
 #include<argparse.hh>
 
 using namespace std;
-
-template<unsigned int N>
-class wrapper{
-private:
-  array<string, N> mArr;
-
-public:
-  wrapper() = default;
-  wrapper( const array<string, N>& arr ){
-    mArr = arr;
-  }
-  const string& get( unsigned int idx = 0 ) const{
-    return mArr[idx];
-  }
-};
-
-template<unsigned int N>
-istream& operator>>( istream& is, wrapper<N>& w ){
-  array<string, N> arr;
-
-  for( auto& it : arr ){
-    is >> it;
-  }
-
-  w = wrapper<N>( arr );
-
-  return is;
-}
 
 TEST_CASE( "Arguments can be checked by existence", "[parser]" ){
   argparse ap;

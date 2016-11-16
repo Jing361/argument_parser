@@ -6,6 +6,35 @@
 #include<string>
 #include<sstream>
 #include<exception>
+#include<array>
+
+template<unsigned int N>
+class wrapper{
+private:
+  std::array<std::string, N> mArr;
+
+public:
+  wrapper() = default;
+  wrapper( const std::array<std::string, N>& arr ){
+    mArr = arr;
+  }
+  const std::string& get( unsigned int idx = 0 ) const{
+    return mArr[idx];
+  }
+};
+
+template<unsigned int N>
+std::istream& operator>>( std::istream& is, wrapper<N>& w ){
+  std::array<std::string, N> arr;
+
+  for( auto& it : arr ){
+    is >> it;
+  }
+
+  w = wrapper<N>( arr );
+
+  return is;
+}
 
 class argumentNotFoundException : public std::exception{
 private:
