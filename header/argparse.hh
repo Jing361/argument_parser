@@ -57,28 +57,30 @@ public:
   invalidTypeException();
 };
 
-class notEnoughParametersException : public std::exception{
+class incorrectParameterCountException : public std::exception{
 private:
   std::string mMessage;
 
 public:
-  notEnoughParametersException( std::string argument, int narg );
+  incorrectParameterCountException( const std::string& argument, unsigned int actual, unsigned int minArg, unsigned int maxArg );
 
   virtual const char* what() const noexcept;
 };
 
 class argument{
 private:
-  unsigned int mNargs;
+  unsigned int mMinArgs;
+  unsigned int mMaxArgs;
   std::string mData;
 
 public:
-  argument();
-  argument( unsigned int nargs, const std::string& defVal );
+  argument() = default;
+  argument(unsigned int minArgs, unsigned int maxArgs, const std::string& defVal);
 
   std::string getValue();
   void setValue( const std::string& str );
-  unsigned int getNargs();
+  unsigned int getMinArgs();
+  unsigned int getMaxArgs();
 };
 
 class argparse{
@@ -89,7 +91,15 @@ private:
 
 public:
   void parse_args( int argc, const char** argv );
-  void add_argument( const std::string& name, std::string defVal = "", unsigned int narg = 0 );
+
+  void add_argument( const std::string& name, std::string defVal, unsigned int minArg, unsigned int maxArg );
+
+  inline void add_argument( const std::string& name, std::string defVal, unsigned int minArg ){ add_argument( name, defVal, minArg, minArg ); }
+
+  inline void add_argument( const std::string& name, std::string defVal ){ add_argument( name, defVal, 0, 0 ); }
+
+  inline void add_argument( const std::string& name ){ add_argument( name, "", 0, 0 ); }
+
   template<class T>
   T get_argument( const std::string& name ){
     try{
