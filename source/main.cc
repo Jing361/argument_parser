@@ -1,6 +1,7 @@
 #include<iostream>
 #include<string>
 #include<exception>
+#include<array>
 
 #define CATCH_CONFIG_MAIN
 #include<catch/catch.hpp>
@@ -9,57 +10,30 @@
 
 using namespace std;
 
+template<unsigned int N>
 class wrapper{
 private:
-  string mStr;
+  array<string, N> mArr;
 
 public:
   wrapper() = default;
-  wrapper( string str ):
-    mStr( str ){
+  wrapper( const array<string, N>& arr ){
+    mArr = arr;
   }
-  const string& get() const{
-    return mStr;
-  }
-};
-
-istream& operator>>( istream& is, wrapper& w ){
-  string str;
-
-  is >> str;
-
-  w = wrapper( str );
-
-  return is;
-}
-
-class doublewide{
-private:
-  string val1;
-  string val2;
-
-public:
-  doublewide() = default;
-  doublewide( string str1, string str2 ):
-    val1( str1 ),
-    val2( str2 ){
-  }
-  const string& get1() const{
-    return val1;
-  }
-  const string& get2() const{
-    return val2;
+  const string& get( unsigned int idx = 0 ) const{
+    return mArr[idx];
   }
 };
 
-istream& operator>>( istream& is, doublewide& w ){
-  string str1;
-  string str2;
+template<unsigned int N>
+istream& operator>>( istream& is, wrapper<N>& w ){
+  array<string, N> arr;
 
-  is >> str1;
-  is >> str2;
+  for( auto& it : arr ){
+    is >> it;
+  }
 
-  w = doublewide( str1, str2 );
+  w = wrapper<N>( arr );
 
   return is;
 }
@@ -100,10 +74,11 @@ TEST_CASE( "Arguments can be checked by existence", "[parser]" ){
     ap.parse_args( --argd, argw );
 
     REQUIRE( ap.get_argument<string>( "--test" ) == string( "a" ) );
-    REQUIRE( ap.get_argument<wrapper>( "--str" ).get() == string( "test" ) );
+    REQUIRE( ap.get_argument<wrapper<1>>( "--str" ).get() == string( "test" ) );
 
-    REQUIRE( ap.get_argument<doublewide>( "--htns" ).get1() == string( "abc" ) );
-    REQUIRE( ap.get_argument<doublewide>( "--htns" ).get2() == string( "xyz" ) );
+    auto htns = ap.get_argument<wrapper<2>>( "--htns" );
+    REQUIRE( htns.get( 0 ) == string( "abc" ) );
+    REQUIRE( htns.get( 1 ) == string( "xyz" ) );
 
     REQUIRE( ap.get_argument<int>( "--aoeu" ) == 1 );
     REQUIRE( ap.get_argument<bool>( "-test" ) );
