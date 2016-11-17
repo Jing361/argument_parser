@@ -32,9 +32,16 @@ TEST_CASE( "Arguments can be checked by existence", "[parser]" ){
 
     try{
       ap.parse_args( argd, argw );
-    } catch( argumentNotFoundException& e ){
-      REQUIRE( e.culprit() == string( "b" ) );
+    } catch( incorrectParameterCountException& e ){
       unspecifiedSanity = true;
+    }
+
+    ap.parse_args( argd - 1, argw );
+
+    try{
+      ap.get_argument<string>( "failure" );
+    } catch( argumentNotFoundException& ){
+      unspecifiedSanity &= true;
     }
 
     REQUIRE( unspecifiedSanity );

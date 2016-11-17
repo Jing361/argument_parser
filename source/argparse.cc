@@ -21,8 +21,10 @@ invalidTypeException::invalidTypeException():
 }
 
 incorrectParameterCountException::incorrectParameterCountException( const std::string& argument, unsigned int actual, unsigned int minArg, unsigned int maxArg ):
-  mMessage("Not enough arguments supplied for \"" + argument + "\".  Expected at least "
-           + to_string( minArg ) + " and at most " + to_string( maxArg ) + "; received " + to_string( actual ) + "." ){
+//TODO: make message specify what extra arguments were when too many were givin?
+  mMessage("Incorrect number of arguments supplied for \"" + argument + 
+           "\".  Expected at least " + to_string( minArg ) + " and at most " +
+           to_string( maxArg ) + "; received " + to_string( actual ) + "." ){
 }
 
 const char* incorrectParameterCountException::what() const noexcept{
@@ -65,32 +67,36 @@ void argparse::parse_args(int argc, const char** argv){
   string tok;
   while( ss >> tok ){
     try{
-      mArgs.at(tok);
-    } catch (std::exception& e){
-      throw argumentNotFoundException(tok);
+      mArgs.at( tok );
+    } catch( std::out_of_range& e ){
+      throw argumentNotFoundException( tok );
     }
     if( tok[0] == '-' ){
       if( tok[1] == '-' ){
-        mArgs[tok].setValue( tok.substr(2) );
+        mArgs[tok].setValue( tok.substr( 2 ) );
       } else {
-        mArgs[tok].setValue( tok.substr(1) );
+        mArgs[tok].setValue( tok.substr( 1 ) );
       }
     }
 
-    unsigned int i = 0;
+    unsigned int argCount = 0;
     string param;
     while( ss >> param ){
-      ++i;
       if( param[0] == '-' ){
-        throw incorrectParameterCountException( tok, i - 1, mArgs[tok].getMinArgs(), mArgs[tok].getMaxArgs() );
+        for( unsigned int i = 0; i < param.size(); ++i ){
+          ss.unget();
+        }
+        break;
       }
+      ++argCount;
+
       mArgs[tok].setValue( mArgs[tok].getValue() + ' ' );
       mArgs[tok].setValue( mArgs[tok].getValue() + param );
     }
     //TODO: make this exception safe
     //data is modified before exception is thrown
-    if( i < mArgs[tok].getMinArgs() || i > mArgs[tok].getMaxArgs() ){
-      throw incorrectParameterCountException( tok, i, mArgs[tok].getMinArgs(), mArgs[tok].getMaxArgs() );
+    if( argCount < mArgs[tok].getMinArgs() || argCount > mArgs[tok].getMaxArgs() ){
+      throw incorrectParameterCountException( tok, argCount, mArgs[tok].getMinArgs(), mArgs[tok].getMaxArgs() );
     }
   }
 }
