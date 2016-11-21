@@ -14,6 +14,41 @@ $(builds):
 
 else
 
+ifeq ($(OS), Windows_NT)
+	FLAGS += -DWIN32
+
+	ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
+#64bit
+	else
+		ifeq ($(PROCESSOR_ARCHITECTURE),AMD64)
+#64bit
+		endif
+		ifeq ($(PROCESSOR_ARCHITECTURE),x86)
+#32bit
+		endif
+	endif
+else
+	UNAME_S:=$(shell uname -s)
+	UNAME_P:=$(shell uname -p)
+
+	ifeq ($(UNAME_S),Linux)
+#linux
+	endif
+	ifeq ($(UNAME_S),Darwin)
+#OSX
+	endif
+
+	ifeq ($(UNAME_S),x86_64)
+#64bit
+	endif
+	ifneq ($(filter %86,$(UNAME_P)),)
+#32bit
+	endif
+	ifneq ($(filter arm%,$(UNAME_P)),)
+#arm
+	endif
+endif
+
 .DEFAULT_GOAL:=$(BINLOC)
 
 SOURCES:=$(shell find $(sourcedir) -name '*$(sourceextension)')
