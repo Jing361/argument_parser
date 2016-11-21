@@ -16,7 +16,7 @@ TEST_CASE( "Arguments can be checked by existence", "[parser]" ){
                          "--aoeu", "1",
                          "--htns", "abc", "xyz",
                          "--str", "test",
-                         "--range", "42", "qwer",
+                         "--range", "42", "qwerty",
                          "-test", "b" };
   int argd = 15;
 
@@ -65,6 +65,7 @@ TEST_CASE( "Arguments can be checked by existence", "[parser]" ){
 
   SECTION( "Arguments can be checked after parsing" ){
     ap.parse_args( --argd, argw );
+
     auto htns = ap.get_argument<wrapper<2>>( "--htns" );
     auto range = ap.get_argument<wrapper<4>>( "--range" );
 
@@ -78,7 +79,7 @@ TEST_CASE( "Arguments can be checked by existence", "[parser]" ){
     REQUIRE( ap.get_argument<bool>( "-test" ) );
 
     REQUIRE( range.get( 0 ) == string( "42" ) );
-    REQUIRE( range.get( 1 ) == string( "qwer" ) );
+    REQUIRE( range.get( 1 ) == string( "qwerty" ) );
     REQUIRE( range.get( 2 ) == string( "" ) );
     REQUIRE( range.get( 3 ) == string( "" ) );
 

@@ -8,7 +8,7 @@ $(builds): export BINLOC = $(binarydir)/$($@dir)/$(name)
 $(builds): export FLAGS  = $($@flags)
 $(builds): export objdir = $(objectdir)/$($@dir)
 $(builds): export depdir = $(dependdir)/$($@dir)
-$(builds): export DIRS   = $(binarydir)/$($@dir)
+$(builds): export bindir = $(binarydir)/$($@dir)
 $(builds):
 	@$(MAKE)
 
@@ -16,10 +16,10 @@ else
 
 .DEFAULT_GOAL:=$(BINLOC)
 
-SOURCES:=$(shell find $(sourcedir) -name '*.cc')
-OBJECTS:=$(subst $(sourcedir),$(objdir), $(subst .cc,.o, $(SOURCES)))
-DEPENDS:=$(subst $(sourcedir),$(depdir), $(subst .cc,.d, $(SOURCES)))
-DIRS := $(sourcedir) $(headerdir) $(objectdir) $(objdir) $(dependdir) $(depdir) $(binarydir) $(DIRS)
+SOURCES:=$(shell find $(sourcedir) -name '*$(sourceextension)')
+OBJECTS:=$(subst $(sourcedir),$(objdir), $(subst $(sourceextension),.o, $(SOURCES)))
+DEPENDS:=$(subst $(sourcedir),$(depdir), $(subst $(sourceextension),.d, $(SOURCES)))
+DIRS := $(sourcedir) $(headerdir) $(objectdir) $(objdir) $(dependdir) $(depdir) $(binarydir) $(bindir)
 
 .SECONDARY:$(OBJECTS)
 
@@ -42,8 +42,8 @@ $(DIRS):
 #   sed:    strip leading spaces
 #   sed:    add trailing colons
 $(objdir)/%.o:|$(DIRS)
-	$(CC) -c $(sourcedir)/$*.cc $(FLAGS) -o $@
-	$(CC) -MM $(FLAGS) $(sourcedir)/$*.cc > $(depdir)/$*.d
+	$(CC) -c $(sourcedir)/$*$(sourceextension) $(FLAGS) -o $@
+	$(CC) -MM $(FLAGS) $(sourcedir)/$*$(sourceextension) > $(depdir)/$*.d
 	@mv -f $(depdir)/$*.d $(depdir)/$*.d.tmp
 	@sed -e 's|.*:|$(objdir)/$*.o:|' < $(depdir)/$*.d.tmp > $(depdir)/$*.d
 	@sed -e 's/.*://' -e 's/\\$$//' < $(depdir)/$*.d.tmp | fmt -1 | \
