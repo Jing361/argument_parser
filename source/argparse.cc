@@ -3,7 +3,7 @@
 
 using namespace std;
 
-argumentNotFoundException::argumentNotFoundException(std::string name):
+argumentNotFoundException::argumentNotFoundException( std::string name ):
   mMessage("Could not find argument \"" + name + "\"."),
   mCulprit(name){
 }
@@ -14,10 +14,6 @@ const char* argumentNotFoundException::what() const noexcept{
 
 const char* argumentNotFoundException::culprit() const noexcept{
   return mCulprit.c_str();
-}
-
-invalidTypeException::invalidTypeException():
-  mMessage("Invalid type for this argument"){
 }
 
 incorrectParameterCountException::incorrectParameterCountException( const std::string& argument, unsigned int actual, unsigned int minArg, unsigned int maxArg ):
@@ -31,7 +27,15 @@ const char* incorrectParameterCountException::what() const noexcept{
   return mMessage.c_str();
 }
 
-argument::argument(unsigned int minArgs, unsigned int maxArgs, const std::string& defVal):
+unknownException::unknownException( const std::string& argument ):
+  mMessage( argument ){
+}
+
+const char* unknownException::what() const noexcept{
+  return mMessage.c_str();
+}
+
+argument::argument( unsigned int minArgs, unsigned int maxArgs, const std::string& defVal ):
   mMinArgs( minArgs ),
   mMaxArgs( maxArgs ),
   mData(defVal){
@@ -41,7 +45,7 @@ std::string argument::getValue(){
   return mData;
 }
 
-void argument::setValue(const std::string& str){
+void argument::setValue( const std::string& str ){
   if( str != "" ){
     mData = str;
   }
@@ -55,7 +59,7 @@ unsigned int argument::getMaxArgs(){
   return mMaxArgs;
 }
 
-void argparse::parse_args(int argc, const char** argv){
+void argparse::parse_args( int argc, const char** argv ){
   string str;
   for( int i = 1; i < argc; ++i ){
     str += argv[i];

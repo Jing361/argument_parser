@@ -49,13 +49,6 @@ public:
   virtual const char* culprit() const noexcept;
 };
 
-class invalidTypeException : public std::exception{
-private:
-  std::string mMessage;
-
-public:
-  invalidTypeException();
-};
 
 class incorrectParameterCountException : public std::exception{
 private:
@@ -63,6 +56,18 @@ private:
 
 public:
   incorrectParameterCountException( const std::string& argument, unsigned int actual, unsigned int minArg, unsigned int maxArg );
+
+  virtual const char* what() const noexcept;
+};
+
+// exception thrown when it is unknown what went wrong
+// this exception is a general case and reports exactly that which is put in its constructor
+class unknownException : public std::exception{
+private:
+  std::string mMessage;
+
+public:
+  unknownException( const std::string& argument );
 
   virtual const char* what() const noexcept;
 };
