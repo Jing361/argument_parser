@@ -8,6 +8,8 @@
 #include<exception>
 #include<array>
 
+#include<iostream>
+
 template<unsigned int N>
 class wrapper{
 private:
@@ -97,11 +99,11 @@ private:
 public:
   void parse_args( int argc, const char** argv );
 
-  void add_argument( const std::string& name, std::string defVal, unsigned int minArg, unsigned int maxArg );
+  void add_argument( const std::string& name, const std::string& defVal, unsigned int minArg, unsigned int maxArg );
 
-  inline void add_argument( const std::string& name, std::string defVal, unsigned int minArg ){ add_argument( name, defVal, minArg, minArg ); }
+  inline void add_argument( const std::string& name, const std::string& defVal, unsigned int minArg ){ add_argument( name, defVal, minArg, minArg ); }
 
-  inline void add_argument( const std::string& name, std::string defVal ){ add_argument( name, defVal, 0, 0 ); }
+  inline void add_argument( const std::string& name, const std::string& defVal ){ add_argument( name, defVal, 0, 0 ); }
 
   inline void add_argument( const std::string& name ){ add_argument( name, "", 0, 0 ); }
 
@@ -109,7 +111,7 @@ public:
   T get_argument( const std::string& name ){
     try{
       mArgs.at( name );
-    } catch( std::exception& e ){
+    } catch( std::exception& ){
       throw argumentNotFoundException( name );
     }
 
@@ -133,11 +135,7 @@ public:
 template<>
 inline bool argparse::get_argument<bool>( const std::string& name ){
   try{
-    if( mArgs.at( name ).getValue() != "" ){
-      return true;
-    } else {
-      return false;
-    }
+    return mArgs.at( name ).getValue() != "";
   } catch( std::exception& e ){
     throw argumentNotFoundException( name );
   }

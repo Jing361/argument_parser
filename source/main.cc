@@ -87,3 +87,49 @@ TEST_CASE( "Arguments can be checked by existence", "[parser]" ){
   }
 }
 
+TEST_CASE( "Argument order doesn't matter", "[parser]" ){
+  unsigned int argd = 5;
+  const char* argw[] = { "main",
+                         "-file", "file/path",
+                         "-o", "file.name" };
+ 
+  const char* argx[] = { "main",
+                         "-o", "file.name"
+                        ,"-file", "file/path" };
+  argparse ap;
+
+  ap.add_argument( "-file", "", 1 );
+  ap.add_argument( "-o", "", 1 );
+
+  SECTION( "file first" ){
+    ap.parse_args( argd, argw );
+
+    REQUIRE( ap.get_argument<string>( "-file" ) == "file/path" );
+    REQUIRE( ap.get_argument<string>( "-o" ) == "file.name" );
+  }
+
+  SECTION( "output first" ){
+    ap.parse_args( argd, argx );
+
+    REQUIRE( ap.get_argument<string>( "-file" ) == "file/path" );
+    REQUIRE( ap.get_argument<string>( "-o" ) == "file.name" );
+  }
+}
+
+TEST_CASE( "", "[parser]" ){
+  unsigned int argd = 3;
+  const char* argw[] = { "main",
+                         "-file", "file/path" };
+  argparse ap;
+
+  ap.add_argument( "-file", "", 1 );
+  ap.add_argument( "-o", "", 1 );
+
+  SECTION( "Arguments can be checked by existence" ){
+    ap.parse_args( argd, argw );
+
+    REQUIRE( ap.get_argument<bool>( "-file" ) );
+    REQUIRE( !ap.get_argument<bool>( "-o" ) );
+  }
+}
+
