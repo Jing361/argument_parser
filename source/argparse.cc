@@ -105,6 +105,10 @@ void argparse::parse_args( int argc, const char** argv ){
 }
 
 void argparse::add_argument( const std::string& name, const std::string& defVal, unsigned int minArg, unsigned int maxArg ){
-  mArgs[name] = argument(minArg, maxArg, name + ' ' + defVal);
+  std::string defaultText = defVal;
+  if( defaultText != "" ){
+    defaultText = name + ' ' + defaultText;
+  }
+  mArgs[name] = argument(minArg, maxArg, defaultText );
 }
 

@@ -8,8 +8,6 @@
 #include<exception>
 #include<array>
 
-#include<iostream>
-
 template<unsigned int N>
 class wrapper{
 private:
