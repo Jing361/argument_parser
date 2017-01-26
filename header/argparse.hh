@@ -109,7 +109,7 @@ public:
   T get_argument( const std::string& name ){
     try{
       mArgs.at( name );
-    } catch( std::exception& ){
+    } catch( std::out_of_range& ){
       throw argumentNotFoundException( name );
     }
 
@@ -134,7 +134,7 @@ template<>
 inline bool argparse::get_argument<bool>( const std::string& name ){
   try{
     return mArgs.at( name ).getValue() != "";
-  } catch( std::exception& e ){
+  } catch( std::out_of_range& ){
     throw argumentNotFoundException( name );
   }
 }
