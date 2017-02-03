@@ -61,14 +61,15 @@ unsigned int argument::getMaxArgs(){
 
 void argparse::parse_args( int argc, const char** argv ){
   string str;
+
   for( int i = 1; i < argc; ++i ){
     str += argv[i];
     str += ' ';
   }
 
   stringstream ss( str );
-
   string tok;
+
   while( ss >> tok ){
     try{
       mArgs.at( tok );
@@ -76,16 +77,16 @@ void argparse::parse_args( int argc, const char** argv ){
       throw argumentNotFoundException( tok );
     }
 
-    string tokenString;
-
-    tokenString = tok;
-
+    string tokenString( tok );
     unsigned int argCount = 0;
     string param;
+
     while( ss >> param ){
       //TODO:find more efficient way to do this step
+      //      Could use peek? but then validity of stream isn't checked..
       if( param[0] == '-' ){
-        for( unsigned int i = 0; i < param.size(); ++i ){
+        for( auto _ : param ){
+          ( void ) _;
           ss.unget();
         }
         break;
@@ -94,6 +95,7 @@ void argparse::parse_args( int argc, const char** argv ){
 
       tokenString += ' ' + param;
     }
+
     mArgs[tok].setValue( tokenString );
 
     //TODO: make this exception safe
