@@ -90,8 +90,6 @@ public:
 
 class argparse{
 private:
-  std::vector<std::string> mSingleTokens;
-  std::vector<std::string> mDoubleTokens;
   std::map<std::string, argument> mArgs;
 
 public:
