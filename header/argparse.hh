@@ -44,7 +44,7 @@ private:
 public:
   argumentNotFoundException( std::string name );
 
-  virtual const char* what() const noexcept;
+  virtual const char* what() const noexcept override;
 
   virtual const char* culprit() const noexcept;
 };
@@ -57,7 +57,7 @@ private:
 public:
   incorrectParameterCountException( const std::string& argument, unsigned int actual, unsigned int minArg, unsigned int maxArg );
 
-  virtual const char* what() const noexcept;
+  virtual const char* what() const noexcept override;
 };
 
 // exception thrown when it is unknown what went wrong
@@ -69,7 +69,7 @@ private:
 public:
   unknownException( const std::string& argument );
 
-  virtual const char* what() const noexcept;
+  virtual const char* what() const noexcept override;
 };
 
 class argument{
@@ -95,6 +95,7 @@ private:
 public:
   void parse_args( int argc, const char** argv );
 
+  /* add_argument is overloaded in this way because the 4th argument of (string, string, uint, uint) signature defaults to the 3rd argument, and the language does not provide for this */
   void add_argument( const std::string& name, const std::string& defVal, unsigned int minArg, unsigned int maxArg );
 
   inline void add_argument( const std::string& name, const std::string& defVal, unsigned int minArg ){ add_argument( name, defVal, minArg, minArg ); }
