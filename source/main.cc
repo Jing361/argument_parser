@@ -3,7 +3,7 @@
 #include<exception>
 
 #define CATCH_CONFIG_MAIN
-#include<catch/catch.hpp>
+#include<catch.hpp>
 
 #include<argparse.hh>
 
