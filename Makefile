@@ -56,6 +56,7 @@ OBJECTS:=$(subst $(sourcedir),$(objdir), $(subst $(sourceextension),.o, $(SOURCE
 DEPENDS:=$(subst $(sourcedir),$(depdir), $(subst $(sourceextension),.d, $(SOURCES)))
 DIRS := $(sourcedir) $(headerdir) $(objectdir) $(objdir) $(dependdir) $(depdir) $(binarydir) $(bindir) $(librarydir)
 LIBS:=$(patsubst %,-l%,$(libraries))
+INCLUDES:=$(patsubst %,-I./%,$(includedirs))
 
 .SECONDARY:$(OBJECTS)
 
@@ -78,7 +79,7 @@ $(DIRS):
 #   sed:    strip leading spaces
 #   sed:    add trailing colons
 $(objdir)/%.o:|$(DIRS)
-	$(CC) -c -MMD -MP -MF $(depdir)/$*.d $(sourcedir)/$*$(sourceextension) $(FLAGS) -o $@
+	$(CC) -c -MMD -MP -MF $(depdir)/$*.d $(sourcedir)/$*$(sourceextension) $(FLAGS) $(INCLUDES) -o $@
 
 endif
 
