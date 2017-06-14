@@ -20,12 +20,12 @@ TEST_CASE( "Arguments can be checked by existence", "[parser]" ){
                          "-test", "b" };
   int argd = 15;
 
-  ap.add_argument( "--test", "", 1 );
-  ap.add_argument( "--aoeu", "", 1 );
-  ap.add_argument( "--htns", "", 2 );
-  ap.add_argument( "--str", "", 1 );
-  ap.add_argument( "--range", "", 1, 4 );
-  ap.add_argument( "--default", "12", 1 );
+  ap.add_argument( "--test", "", "", 1 );
+  ap.add_argument( "--aoeu", "", "", 1 );
+  ap.add_argument( "--htns", "", "", 2 );
+  ap.add_argument( "--str", "", "", 1 );
+  ap.add_argument( "--range", "", "", 1, 4 );
+  ap.add_argument( "--default", "12", "", 1 );
   ap.add_argument( "-test" );
   ap.add_argument( "none" );
 
@@ -52,7 +52,7 @@ TEST_CASE( "Arguments can be checked by existence", "[parser]" ){
   SECTION( "Determines when not enough arguments are given" ){
     bool notEnoughSanity = false;
 
-    ap.add_argument( "--htns", "", 4 );
+    ap.add_argument( "--htns", "", "", 4 );
 
     try{
       ap.parse_args( argd, argw );
@@ -98,8 +98,8 @@ TEST_CASE( "Argument order doesn't matter", "[parser]" ){
                         ,"-file", "file/path" };
   argparse ap;
 
-  ap.add_argument( "-file", "", 1 );
-  ap.add_argument( "-o", "", 1 );
+  ap.add_argument( "-file", "", "", 1 );
+  ap.add_argument( "-o", "", "", 1 );
 
   SECTION( "file first" ){
     ap.parse_args( argd, argw );
@@ -122,8 +122,8 @@ TEST_CASE( "", "[parser]" ){
                          "-file", "file/path" };
   argparse ap;
 
-  ap.add_argument( "-file", "", 1 );
-  ap.add_argument( "-o", "", 1 );
+  ap.add_argument( "-file", "", "", 1 );
+  ap.add_argument( "-o", "", "", 1 );
 
   SECTION( "Arguments can be checked by existence" ){
     ap.parse_args( argd, argw );
@@ -131,5 +131,16 @@ TEST_CASE( "", "[parser]" ){
     REQUIRE( ap.get_argument<bool>( "-file" ) );
     REQUIRE( !ap.get_argument<bool>( "-o" ) );
   }
+}
+
+TEST_CASE( "", "[parser]" ){
+  argparse ap;
+
+  ap.add_argument( "--foo", "1", "foo!" );
+  ap.add_argument( "--bar", "1", "bar?" );
+
+  string str = ap.get_report();
+
+  REQUIRE( str == "bar?\nfoo!\n" );
 }
 

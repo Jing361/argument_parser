@@ -72,15 +72,20 @@ public:
   virtual const char* what() const noexcept override;
 };
 
+class argparse;
+
 class argument{
 private:
   unsigned int mMinArgs;
   unsigned int mMaxArgs;
   std::string mData;
+  std::string mDescription;
+
+  friend argparse;
 
 public:
   argument() = default;
-  argument(unsigned int minArgs, unsigned int maxArgs, const std::string& defVal);
+  argument( unsigned int minArgs, unsigned int maxArgs, const std::string& defVal, const std::string& desc = "" );
 
   std::string getValue();
   void setValue( const std::string& str );
@@ -95,14 +100,16 @@ private:
 public:
   void parse_args( int argc, const char** argv );
 
+  std::string get_report();
+
   /* add_argument is overloaded in this way because the 4th argument of (string, string, uint, uint) signature defaults to the 3rd argument, and the language does not provide for this */
-  void add_argument( const std::string& name, const std::string& defVal, unsigned int minArg, unsigned int maxArg );
+  void add_argument( const std::string& name, const std::string& defVal, const std::string& desc, unsigned int minArg, unsigned int maxArg );
 
-  inline void add_argument( const std::string& name, const std::string& defVal, unsigned int minArg ){ add_argument( name, defVal, minArg, minArg ); }
+  inline void add_argument( const std::string& name, const std::string& defVal, const std::string& desc, unsigned int minArg ){ add_argument( name, defVal, desc, minArg, minArg ); }
 
-  inline void add_argument( const std::string& name, const std::string& defVal ){ add_argument( name, defVal, 0, 0 ); }
+  inline void add_argument( const std::string& name, const std::string& defVal, const std::string& desc ){ add_argument( name, defVal, desc, 0, 0 ); }
 
-  inline void add_argument( const std::string& name ){ add_argument( name, "", 0, 0 ); }
+  inline void add_argument( const std::string& name ){ add_argument( name, "", "", 0, 0 ); }
 
   template<class T>
   T get_argument( const std::string& name ){

@@ -3,7 +3,7 @@
 
 using namespace std;
 
-argumentNotFoundException::argumentNotFoundException( std::string name ):
+argumentNotFoundException::argumentNotFoundException( string name ):
   mMessage( "Could not find argument \"" + name + "\"." ),
   mCulprit( name ){
 }
@@ -16,7 +16,7 @@ const char* argumentNotFoundException::culprit() const noexcept{
   return mCulprit.c_str();
 }
 
-incorrectParameterCountException::incorrectParameterCountException( const std::string& argument, unsigned int actual, unsigned int minArg, unsigned int maxArg ):
+incorrectParameterCountException::incorrectParameterCountException( const string& argument, unsigned int actual, unsigned int minArg, unsigned int maxArg ):
 //TODO: make message specify what extra arguments were when too many were givin?
   mMessage("Incorrect number of arguments supplied for \"" + argument + 
            "\".  Expected at least " + to_string( minArg ) + " and at most " +
@@ -27,7 +27,7 @@ const char* incorrectParameterCountException::what() const noexcept{
   return mMessage.c_str();
 }
 
-unknownException::unknownException( const std::string& argument ):
+unknownException::unknownException( const string& argument ):
   mMessage( argument ){
 }
 
@@ -35,17 +35,18 @@ const char* unknownException::what() const noexcept{
   return mMessage.c_str();
 }
 
-argument::argument( unsigned int minArgs, unsigned int maxArgs, const std::string& defVal ):
+argument::argument( unsigned int minArgs, unsigned int maxArgs, const string& defVal, const string& desc ):
   mMinArgs( minArgs ),
   mMaxArgs( maxArgs ),
-  mData( defVal ){
+  mData( defVal ),
+  mDescription( desc ){
 }
 
-std::string argument::getValue(){
+string argument::getValue(){
   return mData;
 }
 
-void argument::setValue( const std::string& str ){
+void argument::setValue( const string& str ){
   if( str != "" ){
     mData = str;
   }
@@ -73,7 +74,7 @@ void argparse::parse_args( int argc, const char** argv ){
   while( ss >> tok ){
     try{
       mArgs.at( tok );
-    } catch( std::out_of_range& e ){
+    } catch( out_of_range& e ){
       throw argumentNotFoundException( tok );
     }
 
@@ -106,11 +107,23 @@ void argparse::parse_args( int argc, const char** argv ){
   }
 }
 
-void argparse::add_argument( const std::string& name, const std::string& defVal, unsigned int minArg, unsigned int maxArg ){
-  std::string defaultText = defVal;
+std::string argparse::get_report(){
+  std::string retString;
+
+  for( auto it : mArgs ){
+    retString += it.second.mDescription + '\n';
+  }
+
+  return retString;
+}
+
+void argparse::add_argument( const string& name, const string& defVal, const string& desc, unsigned int minArg, unsigned int maxArg ){
+  string defaultText = defVal;
+
   if( defaultText != "" ){
     defaultText = name + ' ' + defaultText;
   }
-  mArgs[name] = argument(minArg, maxArg, defaultText );
+
+  mArgs[name] = argument( minArg, maxArg, defaultText, desc );
 }
 
