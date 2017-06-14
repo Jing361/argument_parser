@@ -139,8 +139,6 @@ TEST_CASE( "", "[parser]" ){
   ap.add_argument( "--foo", "1", "foo!" );
   ap.add_argument( "--bar", "1", "bar?" );
 
-  string str = ap.get_report();
-
-  REQUIRE( str == "bar?\nfoo!\n" );
+  REQUIRE( ap.get_report() == "--bar\n\tbar?\n\n--foo\n\tfoo!\n\n" );
 }
 

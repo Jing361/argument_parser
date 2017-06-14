@@ -111,7 +111,7 @@ std::string argparse::get_report(){
   std::string retString;
 
   for( auto it : mArgs ){
-    retString += it.second.mDescription + '\n';
+    retString += it.first + "\n\t" + it.second.mDescription + "\n\n";
   }
 
   return retString;
