@@ -5,7 +5,7 @@
 #include<map>
 #include<string>
 #include<sstream>
-#include<exception>
+#include<stdexcept>
 #include<array>
 
 template<unsigned int N>
@@ -15,8 +15,8 @@ private:
 
 public:
   wrapper() = default;
-  wrapper( const std::array<std::string, N>& arr ){
-    mArr = arr;
+  wrapper( const std::array<std::string, N>& arr ):
+    mArr( arr ){
   }
   const std::string& get( unsigned int idx = 0 ) const{
     return mArr[idx];
@@ -36,40 +36,30 @@ std::istream& operator>>( std::istream& is, wrapper<N>& w ){
   return is;
 }
 
-class argumentNotFoundException : public std::exception{
+class argumentNotFoundException : public std::out_of_range{
 private:
-  std::string mMessage;
   std::string mCulprit;
 
 public:
-  argumentNotFoundException( std::string name );
-
-  virtual const char* what() const noexcept override;
+  argumentNotFoundException( const std::string& name );
 
   virtual const char* culprit() const noexcept;
 };
 
-
-class incorrectParameterCountException : public std::exception{
+class incorrectParameterCountException : public std::range_error{
 private:
-  std::string mMessage;
 
 public:
   incorrectParameterCountException( const std::string& argument, unsigned int actual, unsigned int minArg, unsigned int maxArg );
-
-  virtual const char* what() const noexcept override;
 };
 
 // exception thrown when it is unknown what went wrong
 // this exception is a general case and reports exactly that which is put in its constructor
-class unknownException : public std::exception{
+class unknownException : public std::runtime_error{
 private:
-  std::string mMessage;
 
 public:
   unknownException( const std::string& argument );
-
-  virtual const char* what() const noexcept override;
 };
 
 class argparse;
