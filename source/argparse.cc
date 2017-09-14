@@ -3,15 +3,6 @@
 
 using namespace std;
 
-argumentNotFoundException::argumentNotFoundException( const string& name ):
-  out_of_range( "Could not find argument \"" + name + "\"." ),
-  mCulprit( name ){
-}
-
-const char* argumentNotFoundException::culprit() const noexcept{
-  return mCulprit.c_str();
-}
-
 incorrectParameterCountException::incorrectParameterCountException( const string& argument, unsigned int actual, unsigned int minArg, unsigned int maxArg ):
 //TODO: make message specify what extra arguments were when too many were givin?
   range_error("Incorrect number of arguments supplied for \"" + argument + 
@@ -60,11 +51,7 @@ void argparse::parse_args( int argc, const char** argv ){
   string tok;
 
   while( ss >> tok ){
-    try{
-      mArgs.at( tok );
-    } catch( out_of_range& ){
-      throw argumentNotFoundException( tok );
-    }
+    mArgs.at( tok );
 
     string tokenString( tok );
     unsigned int argCount = 0;

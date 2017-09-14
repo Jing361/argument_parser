@@ -42,7 +42,7 @@ TEST_CASE( "Arguments can be checked by existence", "[parser]" ){
 
     try{
       ap.get_argument<string>( "failure" );
-    } catch( argumentNotFoundException& ){
+    } catch( out_of_range& ){
       unspecifiedSanity &= true;
     }
 

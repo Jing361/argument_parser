@@ -36,16 +36,6 @@ std::istream& operator>>( std::istream& is, wrapper<N>& w ){
   return is;
 }
 
-class argumentNotFoundException : public std::out_of_range{
-private:
-  std::string mCulprit;
-
-public:
-  argumentNotFoundException( const std::string& name );
-
-  virtual const char* culprit() const noexcept;
-};
-
 class incorrectParameterCountException : public std::range_error{
 private:
 
@@ -103,11 +93,7 @@ public:
 
   template<class T>
   T get_argument( const std::string& name ){
-    try{
-      mArgs.at( name );
-    } catch( std::out_of_range& ){
-      throw argumentNotFoundException( name );
-    }
+    mArgs.at( name );
 
     std::stringstream ss( mArgs[name].getValue() );
     std::string dump;
@@ -128,11 +114,7 @@ public:
  */
 template<>
 inline bool argparse::get_argument<bool>( const std::string& name ){
-  try{
-    return mArgs.at( name ).getValue() != "";
-  } catch( std::out_of_range& ){
-    throw argumentNotFoundException( name );
-  }
+  return mArgs.at( name ).getValue() != "";
 }
 
 #endif
