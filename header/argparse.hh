@@ -15,9 +15,11 @@ private:
 
 public:
   wrapper() = default;
+
   wrapper( const std::array<std::string, N>& arr ):
     mArr( arr ){
   }
+
   const std::string& get( unsigned int idx = 0 ) const{
     return mArr[idx];
   }
@@ -43,15 +45,6 @@ public:
   incorrectParameterCountException( const std::string& argument, unsigned int actual, unsigned int minArg, unsigned int maxArg );
 };
 
-// exception thrown when it is unknown what went wrong
-// this exception is a general case and reports exactly that which is put in its constructor
-class unknownException : public std::runtime_error{
-private:
-
-public:
-  unknownException( const std::string& argument );
-};
-
 class argparse;
 
 class argument{
@@ -65,11 +58,16 @@ private:
 
 public:
   argument() = default;
-  argument( unsigned int minArgs, unsigned int maxArgs, const std::string& defVal, const std::string& desc = "" );
+
+  argument( unsigned int minArgs, unsigned int maxArgs,
+            const std::string& defVal, const std::string& desc = "" );
 
   std::string getValue();
+
   void setValue( const std::string& str );
+
   unsigned int getMinArgs();
+
   unsigned int getMaxArgs();
 };
 
@@ -83,19 +81,31 @@ public:
   std::string get_report();
 
   /* add_argument is overloaded in this way because the 4th argument of (string, string, uint, uint) signature defaults to the 3rd argument, and the language does not provide for this */
-  void add_argument( const std::string& name, const std::string& defVal, const std::string& desc, unsigned int minArg, unsigned int maxArg );
+  void add_argument( const std::string& name, const std::string& defVal,
+                     const std::string& desc,
+                     unsigned int minArg, unsigned int maxArg );
 
-  inline void add_argument( const std::string& name, const std::string& defVal, const std::string& desc, unsigned int minArg ){ add_argument( name, defVal, desc, minArg, minArg ); }
+  inline void add_argument( const std::string& name, const std::string& defVal,
+                            const std::string& desc,
+                            unsigned int minArg ){
+    add_argument( name, defVal, desc, minArg, minArg );
+  }
 
-  inline void add_argument( const std::string& name, const std::string& defVal, const std::string& desc ){ add_argument( name, defVal, desc, 0, 0 ); }
+  inline void add_argument( const std::string& name, const std::string& defVal,
+                            const std::string& desc ){
+    add_argument( name, defVal, desc, 0, 0 );
+  }
 
-  inline void add_argument( const std::string& name ){ add_argument( name, "", "", 0, 0 ); }
+  inline void add_argument( const std::string& name ){
+    add_argument( name, "", "", 0, 0 );
+  }
 
   template<class T>
   T get_argument( const std::string& name ){
-    mArgs.at( name );
+    auto arg = mArgs.at( name );
 
-    std::stringstream ss( mArgs[name].getValue() );
+    std::stringstream ss( arg.getValue() );
+    // the first value is dumped out because it is the name of the argument
     std::string dump;
 
     ss >> dump;
@@ -109,7 +119,8 @@ public:
 };
 
 /* this specialization depends on the value returned from getvalue to be not 
- * empty when the value was found.  the simple solution is to always prepend
+ * empty when the value was found.  This will cause a failure if the flag
+ * depends on existence, not a value. The simple solution is to always prepend
  * the value with the argument name when it is found.
  */
 template<>

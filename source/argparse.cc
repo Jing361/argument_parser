@@ -3,15 +3,11 @@
 
 using namespace std;
 
-incorrectParameterCountException::incorrectParameterCountException( const string& argument, unsigned int actual, unsigned int minArg, unsigned int maxArg ):
 //TODO: make message specify what extra arguments were when too many were givin?
+incorrectParameterCountException::incorrectParameterCountException( const string& argument, unsigned int actual, unsigned int minArg, unsigned int maxArg ):
   range_error("Incorrect number of arguments supplied for \"" + argument + 
               "\".  Expected at least " + to_string( minArg ) + " and at most " +
               to_string( maxArg ) + "; received " + to_string( actual ) + "." ){
-}
-
-unknownException::unknownException( const string& argument ):
-  runtime_error( argument ){
 }
 
 argument::argument( unsigned int minArgs, unsigned int maxArgs, const string& defVal, const string& desc ):
@@ -72,13 +68,11 @@ void argparse::parse_args( int argc, const char** argv ){
       tokenString += ' ' + param;
     }
 
-    mArgs[tok].setValue( tokenString );
-
-    /*! @todo make this exception safe */
-    //data is modified before exception is thrown
-    if( argCount < mArgs[tok].getMinArgs() || argCount > mArgs[tok].getMaxArgs() ){
+    if( ( argCount < mArgs[tok].getMinArgs() ) || ( argCount > mArgs[tok].getMaxArgs() ) ){
       throw incorrectParameterCountException( tok, argCount, mArgs[tok].getMinArgs(), mArgs[tok].getMaxArgs() );
     }
+
+    mArgs[tok].setValue( tokenString );
   }
 }
 
