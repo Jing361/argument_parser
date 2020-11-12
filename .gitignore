@@ -5,3 +5,6 @@ depend/*
 *.swp
 *.o
 *.a
+
+.idea/*
+cmake-*/*
